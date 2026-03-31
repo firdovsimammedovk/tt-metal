@@ -65,8 +65,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [[ ! -d "tt_metal/third_party/tracy" ]]; then
+            echo "Tracy submodule directory missing; skipping Tracy Makefile guard."
+            exit 0
+          fi
           for tool in csvexport capture; do
             dir="tt_metal/third_party/tracy/${tool}/build/unix"
+            mkdir -p "${dir}"
             if [[ ! -f "${dir}/Makefile" ]]; then
               printf '%b\n' \
                 'all: release' \
