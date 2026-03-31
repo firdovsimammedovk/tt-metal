@@ -66,12 +66,12 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -x ./build_metal.sh ]]; then
-            ./build_metal.sh
+            ./build_metal.sh --disable-profiler
           elif [[ -f ./build_metal.sh ]]; then
             chmod +x ./build_metal.sh
-            ./build_metal.sh
+            ./build_metal.sh --disable-profiler
           else
-            cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build
+            cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build -DENABLE_TRACY=OFF
             cmake --build build
             cmake --install build
           fi
