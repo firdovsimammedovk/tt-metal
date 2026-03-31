@@ -14,7 +14,7 @@ tt_build
 tt_debug
 .build/
 build
-build_*
+/build_*
 !/build_metal.sh
 /python_env/
 CMakeUserPresets.json
