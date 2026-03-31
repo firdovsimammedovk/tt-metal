@@ -46,7 +46,7 @@ Then, install `ttnn-visualizer` via pip:
 pip install ttnn-visualizer
 ```
 
-For installation from source or system requirements, see the [getting started guide](https://docs.tenstorrent.com/ttnn-visualizer/src/installing.html).
+For installation from source or system requirements, see the [getting started guide](https://firdovsimammedovk.github.io/tenstorrent/ttnn-visualizer/src/installing.html).
 
 > [!NOTE]
 > You can run the visualizer on your local machine and either connect remotely to your Tenstorrent system via SSH or copy the generated profiling files to your local machine for offline analysis.

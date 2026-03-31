@@ -20,12 +20,26 @@ async function loadVersions() {
         const response = await fetch(VERSIONS_URL);
         const data = await response.json();
         const versionList = document.getElementById('version-list');
-        const projectCode = location.pathname.split('/')[3];
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        let projectCode = "";
+        if (parts[0] === "tt-metal" && (parts[1] === "ttnn" || parts[1] === "tt-metalium")) {
+            // New URL style: /tt-metal/<project>/
+            projectCode = parts[1];
+        } else if (parts[0] === "tt-metal" && parts.length > 2) {
+            // Legacy URL style: /tt-metal/<version>/<project>/
+            projectCode = parts[2];
+        }
+        const projectBaseUrls = {
+            "ttnn": "https://firdovsimammedovk.github.io/tt-metal/ttnn/",
+            "tt-metalium": "https://firdovsimammedovk.github.io/tt-metal/tt-metalium/",
+        };
+        const fallbackUrl = "https://firdovsimammedovk.github.io/tenstorrent/";
+        const targetUrl = projectBaseUrls[projectCode] || fallbackUrl;
 
         data.versions.forEach(version => {
             const dd = document.createElement('dd');
             const link = document.createElement('a');
-            link.href = `https://docs.tenstorrent.com/tt-metal/${version}/${projectCode}/index.html`;
+            link.href = targetUrl;
             link.textContent = version;
             dd.appendChild(link);
             versionList.appendChild(dd);
@@ -38,7 +52,16 @@ async function loadVersions() {
 loadVersions();
 
 function getCurrentVersion() {
-    return window.location.pathname.split('/')[2];
+    const parts = window.location.pathname.split('/').filter(Boolean);
+    // New URL style has no version segment.
+    if (parts[0] === "tt-metal" && (parts[1] === "ttnn" || parts[1] === "tt-metalium")) {
+        return "latest";
+    }
+    // Legacy URL style.
+    if (parts[0] === "tt-metal" && parts.length > 1) {
+        return parts[1];
+    }
+    return "latest";
 }
 document.getElementById('current-version').textContent = getCurrentVersion();
 

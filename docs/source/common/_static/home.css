@@ -1,6 +1,6 @@
 /*
   For use in /core only (see /core/conf.py)
-  Hides sphinx generated homepage header (https://docs.tenstorrent.com/)
+  Hides sphinx generated homepage header (https://firdovsimammedovk.github.io/tenstorrent/)
 */
 
 #tenstorrent > h1 {

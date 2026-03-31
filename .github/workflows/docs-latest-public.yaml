@@ -44,6 +44,34 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Restore docs virtualenv cache
+        id: cache-docs-venv
+        uses: actions/cache@v4
+        with:
+          path: .ci-docs-venv
+          key: ${{ runner.os }}-docs-venv-py311-${{ hashFiles('docs/requirements-docs.txt', 'setup.py', 'pyproject.toml') }}
+
+      - name: Restore C++ build cache
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: |
+            build
+            build_Release
+          key: ${{ runner.os }}-docs-build-${{ hashFiles('build_metal.sh', 'CMakeLists.txt', 'cmake/**/*.cmake', 'tt_metal/CMakeLists.txt', 'ttnn/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-docs-build-
+
+      - name: Activate docs virtualenv
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -d ".ci-docs-venv" ]]; then
+            python3 -m venv .ci-docs-venv
+          fi
+          echo "VIRTUAL_ENV=${{ github.workspace }}/.ci-docs-venv" >> "$GITHUB_ENV"
+          echo "${{ github.workspace }}/.ci-docs-venv/bin" >> "$GITHUB_PATH"
+
       - name: Install system dependencies
         shell: bash
         run: |
@@ -62,9 +90,12 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Build and install prerequisites
+        if: steps.cache-build.outputs.cache-hit != 'true' || steps.cache-docs-venv.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
+          source .ci-docs-venv/bin/activate
+          python -m pip install --upgrade pip
           if [[ -x ./build_metal.sh ]]; then
             ./build_metal.sh --disable-profiler
           elif [[ -f ./build_metal.sh ]]; then

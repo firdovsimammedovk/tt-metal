@@ -8,4 +8,4 @@ It contains a header file `emitc.hpp` which should not be freely edited. The hea
 
 `tt-mlir`:
 - [compiler](https://github.com/tenstorrent/tt-mlir)
-- [codegen docs](https://docs.tenstorrent.com/tt-mlir/ttnn-standalone.html)
+- [codegen docs](https://firdovsimammedovk.github.io/tenstorrent/tt-mlir/ttnn-standalone.html)

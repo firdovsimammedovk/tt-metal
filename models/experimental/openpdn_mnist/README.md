@@ -4,7 +4,7 @@ The OpenPDN Mnist model is a Convolutional Neural Network (CNN) designed for ima
 ## How to Run
 
 To run the demo, make sure to build the project, activate the environment, and set the appropriate environment variables.
-For more information, refer [installation and build guide](https://docs.tenstorrent.com/tt-metalium/latest/get_started/get_started.html#install-and-build).
+For more information, refer [installation and build guide](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/get_started/get_started.html#install-and-build).
 
 To run the functional OpenPDN Mnist model on a single-chip with random weights:
 ```sh

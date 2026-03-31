@@ -509,7 +509,7 @@ inline void calculate_sine() {
 
 While Metalium supports custom vectorized computation implementations, developers should note that vector width and hardware-specific details vary between processor generations. And working implementation must be provide for the target processor. For most applications, use the provided compute APIs from the kernel library since Tenstorrent maintains these implementations for compatibility with future hardware generations. For custom vectorized computation guidance, see the [Low Level Kernels][tt_llk_doc] section in the Metalium documentation.
 
-[tt_llk_doc]: https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/apis/kernel_apis/sfpu/llk.html
+[tt_llk_doc]: https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/apis/kernel_apis/sfpu/llk.html
 
 ### Fast dispatch
 

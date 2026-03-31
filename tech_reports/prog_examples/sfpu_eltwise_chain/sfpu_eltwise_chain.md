@@ -79,7 +79,7 @@ The input data is then tilized to match the hardware's expected tiled layout fro
 src_vec = tilize_nfaces(src_vec, constants::TILE_WIDTH, constants::TILE_HEIGHT);
 ```
 
-To learn more about tile layout, please refer to the [Tiles documentation](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/advanced_topics/tiles.html).
+To learn more about tile layout, please refer to the [Tiles documentation](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/advanced_topics/tiles.html).
 
 ---
 
@@ -292,7 +292,7 @@ This pattern can be extended to implement more complex mathematical functions by
 
 **Precision Considerations**: The DST (Destination) registers used in SFPU operations can hold data in either BFP16 or FP32 format depending on kernel configuration settings. This precision setting affects the accuracy of chained operations, as precision loss can accumulate through the chain of computations.
 
-For detailed information about DST register precision and configuration, refer to the [Compute Engines and Dataflow documentation](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/advanced_topics/compute_engines_and_dataflow_within_tensix.html#dst-register).
+For detailed information about DST register precision and configuration, refer to the [Compute Engines and Dataflow documentation](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/advanced_topics/compute_engines_and_dataflow_within_tensix.html#dst-register).
 
 ---
 

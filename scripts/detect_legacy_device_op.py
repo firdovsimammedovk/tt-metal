@@ -192,7 +192,7 @@ def main():
     print("", file=sys.stderr)
     print("Please follow the modern device operation pattern instead:", file=sys.stderr)
     print(
-        "  - See documentation: https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/adding_new_ttnn_operation.html",
+        "  - See documentation: https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/adding_new_ttnn_operation.html",
         file=sys.stderr,
     )
 

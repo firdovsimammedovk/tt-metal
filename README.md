@@ -15,7 +15,7 @@
 
 <h3>
 
-[API Reference](https://docs.tenstorrent.com/tt-metal/latest/ttnn/index.html) | [Model Demos](./models/demos/)
+[API Reference](https://firdovsimammedovk.github.io/tt-metal/ttnn/index.html) | [Model Demos](./models/demos/)
 
 </h3>
 
@@ -96,14 +96,14 @@ For information on initial model procedures, please see [Model Bring-Up and Test
 
 <h3>
 
-[Programming Guide](./METALIUM_GUIDE.md) | [API Reference](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/apis/index.html)
+[Programming Guide](./METALIUM_GUIDE.md) | [API Reference](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/apis/index.html)
 
 </h3>
 </div>
 
 ## Getting started
 
-Get started with [simple kernels](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/examples/index.html).
+Get started with [simple kernels](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/examples/index.html).
 
 ## TT-Metalium Tech Reports
 
@@ -177,7 +177,7 @@ The Model Explorer is an intuitive and hierarchical visualization tool using mod
 #### [Tracy Profiler](https://github.com/tenstorrent/tracy)
 The Tracy Profiler is a real-time nanosecond resolution, remote telemetry, hybrid frame, and sampling tool. Tracy supports profiling CPU, GPU, memory allocation, locks, context switches, and more.
 
-#### [Kernel Print Debug](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tools/kernel_print.html)
+#### [Kernel Print Debug](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tools/kernel_print.html)
 DPRINT can print variables, addresses, and circular buffer data from kernels to the host terminal or log file. This feature is useful for debugging issues with kernels.
 
 #### [Watcher](https://github.com/tenstorrent/tt-metal/blob/main/docs/source/tt-metalium/tools/watcher.rst)
@@ -216,7 +216,7 @@ Inspector provides insights into host runtime. It logs necessary data for invest
 Visit the [releases](https://github.com/tenstorrent/tt-metal/tree/main/releases) folder for details on releases, release notes, and estimated release dates.
 
 ## Tenstorrent Bounty Program Terms and Conditions
-This repo is a part of Tenstorrent’s bounty program. If you are interested in helping to improve tt-metal, please make sure to read the [Tenstorrent Bounty Program Terms and Conditions](https://docs.tenstorrent.com/bounty_terms.html) before heading to the issues tab. Look for the issues that are tagged with both “bounty” and difficulty level!
+This repo is a part of Tenstorrent’s bounty program. If you are interested in helping to improve tt-metal, please make sure to read the [Tenstorrent Bounty Program Terms and Conditions](https://firdovsimammedovk.github.io/tenstorrent/bounty_terms.html) before heading to the issues tab. Look for the issues that are tagged with both “bounty” and difficulty level!
 
 ## License
 TT-Metalium and TTNN are licensed under the Apache 2.0 License, as detailed in [LICENSE](LICENSE) and [LICENSE_understanding.txt](LICENSE_understanding.txt).

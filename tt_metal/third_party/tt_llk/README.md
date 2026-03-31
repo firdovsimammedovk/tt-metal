@@ -76,7 +76,7 @@ We welcome contributions to improve tt-llk! Please follow these steps to get sta
 
 ## Tenstorrent Bounty Program Terms and Conditions ##
 
-This repo is a part of Tenstorrent’s bounty program. If you are interested in helping to improve tt-llk, please make sure to read the [Tenstorrent Bounty Program Terms and Conditions](https://docs.tenstorrent.com/bounty_terms.html) before heading to the issues tab. Look for the issues that are tagged with both 'bounty' and difficulty level labels!
+This repo is a part of Tenstorrent’s bounty program. If you are interested in helping to improve tt-llk, please make sure to read the [Tenstorrent Bounty Program Terms and Conditions](https://firdovsimammedovk.github.io/tenstorrent/bounty_terms.html) before heading to the issues tab. Look for the issues that are tagged with both 'bounty' and difficulty level labels!
 
 ### Note ###
 

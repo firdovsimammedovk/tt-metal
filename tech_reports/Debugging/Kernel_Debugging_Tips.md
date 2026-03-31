@@ -9,7 +9,7 @@
 
 ## DPRINT
 
-https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tools/kernel_print.html
+https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tools/kernel_print.html
 
 * useful for deterministic hang debug and pcc issues
 * simple example:
@@ -37,7 +37,7 @@ inline void print_full_tile(uint32_t cb_id, uint32_t tile_id = 0, bool untilize 
 
 ## Watcher
 
-https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tools/watcher.html
+https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tools/watcher.html
 
 * useful for hang debug
 * simple example:

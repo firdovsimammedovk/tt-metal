@@ -28,7 +28,7 @@
 
 ## 1. Overview
 
-[TTNN](https://docs.tenstorrent.com/tt-metal/latest/ttnn/index.html) is a library that provides a user-friendly interface to operations that run on TensTorrent’s hardware using tt-metal programming model. ttnn is designed to be intuitive to an user that is familiar with [PyTorch](https://pytorch.org/). This report will walk you through our recommended steps to bringup deep learning models that can run efficiently on Tenstorrent's hardware using the TTNN library. We will suggest a flow with code examples and diagrams to enable new users interested in bringing up their own models.
+[TTNN](https://firdovsimammedovk.github.io/tt-metal/ttnn/index.html) is a library that provides a user-friendly interface to operations that run on TensTorrent’s hardware using tt-metal programming model. ttnn is designed to be intuitive to an user that is familiar with [PyTorch](https://pytorch.org/). This report will walk you through our recommended steps to bringup deep learning models that can run efficiently on Tenstorrent's hardware using the TTNN library. We will suggest a flow with code examples and diagrams to enable new users interested in bringing up their own models.
 
 ## 2. New model bringup flow in TTNN
 
@@ -97,8 +97,8 @@ The diagram below illustrates the corresponding Downsample1 module:
     ./tools/tracy/profile_this.py -n bert_tiny -c "pytest models/demos/wormhole/bert_tiny/demo/demo.py::test_demo"
     ```
   - Once you execute such command, a .csv perf sheet will appear in your execution path. You may open the file via excel for better utilities.
-  - You may refer to [TTNN profiler documentation](https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/profiling_ttnn_operations.html) for a more comprehensive overview of the profiler tool and the details of the generated perf sheet by it.
-  - [Perf Report Headers](https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/profiling_ttnn_operations.html#perf-report-headers) will be particularly helpful in understanding the content of the generated perf sheet.
+  - You may refer to [TTNN profiler documentation](https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/profiling_ttnn_operations.html) for a more comprehensive overview of the profiler tool and the details of the generated perf sheet by it.
+  - [Perf Report Headers](https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/profiling_ttnn_operations.html#perf-report-headers) will be particularly helpful in understanding the content of the generated perf sheet.
   - The first thing to check on the perf sheet would be to look at the device kernel duration reported in ns per op. By using excel tools, you can quickly identify the largest values in the column. Then see, which op they correspond to. Here are some examples:
   - ![perf-sheet snippet](images/perf-sheet-sample1.png)
   - Once you identify the op, it is recommended to check the number of cores used for the op among other configs/parameters. For instance for the shared snnipet, you can see how the device kernel durations are high when ops are running on low number of cores. For the examples of a convolution op, you may increase the number of cores used by adjsting the sharding strategy (height, width or block sharding). See an example here in [yolov4 tech report](https://github.com/tenstorrent/tt-metal/blob/main/tech_reports/YoloV4-TTNN/yolov4.md#24-use-best-shardlayout-for-convolution)

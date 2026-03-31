@@ -10,7 +10,7 @@ This document provides advanced users and developers with comprehensive instruct
 ## Prerequisites:
 
 ### 1: Set Up the Hardware
-- Follow the instructions for the Tenstorrent device you are using at: [Hardware Setup](https://docs.tenstorrent.com)
+- Follow the instructions for the Tenstorrent device you are using at: [Hardware Setup](https://firdovsimammedovk.github.io/tenstorrent)
 
 ---
 
@@ -47,7 +47,7 @@ chmod +x install.sh
 - For more information visit Tenstorrent's [TT-Installer GitHub repository](https://github.com/tenstorrent/tt-installer).
 
 #### Option 2: Manual Installation
-- For more control over each stack component, refer to the [manual software dependencies installation guide.](https://docs.tenstorrent.com/getting-started/manual-software-install.html)
+- For more control over each stack component, refer to the [manual software dependencies installation guide.](https://firdovsimammedovk.github.io/tenstorrent/getting-started/manual-software-install.html)
 
 ## TT-NN / TT-Metalium Installation
 
@@ -112,7 +112,7 @@ docker run -it --rm --device /dev/tenstorrent ghcr.io/tenstorrent/tt-metal/tt-me
 
 - For more information on the Docker Release Images, visit our [Docker registry page](https://github.com/orgs/tenstorrent/packages?q=tt-metalium-ubuntu&tab=packages&q=tt-metalium-ubuntu-22.04-release-amd64).
 
-- You are all set! Try some [TT-NN Basic Examples](https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/usage.html#basic-examples) next.
+- You are all set! Try some [TT-NN Basic Examples](https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/usage.html#basic-examples) next.
 
 ---
 
@@ -193,7 +193,7 @@ All binaries support only Linux and distros with glibc 2.34 or newer.
   python3 -m ttnn.examples.usage.run_op_on_device
   ```
 
-- For more programming examples to try, visit Tenstorrent's [TT-NN Basic Examples Page](https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/usage.html#basic-examples) or get started with [Simple Kernels on TT-Metalium](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tt_metal/examples/index.html)
+- For more programming examples to try, visit Tenstorrent's [TT-NN Basic Examples Page](https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/usage.html#basic-examples) or get started with [Simple Kernels on TT-Metalium](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tt_metal/examples/index.html)
 
 
 ### Interested in Contributing?

@@ -110,7 +110,7 @@ Each sage searches their architecture folder:
 `tests/python_tests/` for golden models and test patterns
 
 #### 4. Fallback: TT-METAL Documentation
-- https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/index.html
+- https://firdovsimammedovk.github.io/tt-metal/tt-metalium/index.html
 
 <IMPORTANT>Use ONLY when sage agents and DeepWiki fail to answer.</IMPORTANT>
 

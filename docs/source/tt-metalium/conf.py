@@ -106,7 +106,7 @@ html_baseurl = f"/tt-metal/" + os.environ["DOCS_VERSION"] + f"/{metal_sphinx_con
 html_static_path = ["_static"]
 html_js_files = ["posthog.js"]
 
-html_context = {"logo_link_url": "https://docs.tenstorrent.com/"}
+html_context = {"logo_link_url": "https://firdovsimammedovk.github.io/tenstorrent/"}
 
 
 def setup(app):

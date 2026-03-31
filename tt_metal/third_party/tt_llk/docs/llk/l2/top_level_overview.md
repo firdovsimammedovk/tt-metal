@@ -79,7 +79,7 @@ For optimal LLK performance, input data must be arranged in 32×32 tiles. Each t
 
 ## Data formats
 
-Input and output tensors support multiple storage formats, enabling developers to select the optimal precision for their application. The complete list of supported formats is available in [the official data format table](https://docs.tenstorrent.com/pybuda/latest/dataformats.html).
+Input and output tensors support multiple storage formats, enabling developers to select the optimal precision for their application. The complete list of supported formats is available in [the official data format table](https://firdovsimammedovk.github.io/tenstorrent/pybuda/latest/dataformats.html).
 
 Important considerations:
 - All formats can be stored in L1 memory.
@@ -88,7 +88,7 @@ Important considerations:
 ## Math fidelity
 
 The Tensix hardware can use a limited number of bits for multiplication operations. To utilize all the bits from the datums of a particular data format, several multiplication phases might be required to achieve full precision.
-[Math fidelity](https://docs.tenstorrent.com/pybuda/latest/dataformats.html) is a key concept in achieving computational accuracy. Tensix Cores support up to four fidelity phases depending on the data format. Tenstorrent allows developers to choose the fidelity level for some operations, balancing accuracy requirements with performance for their specific application.
+[Math fidelity](https://firdovsimammedovk.github.io/tenstorrent/pybuda/latest/dataformats.html) is a key concept in achieving computational accuracy. Tensix Cores support up to four fidelity phases depending on the data format. Tenstorrent allows developers to choose the fidelity level for some operations, balancing accuracy requirements with performance for their specific application.
 
 ## Unpacker
 

@@ -74,7 +74,7 @@ Since the module classes are meant to only exist as namespaces for the module-sp
   - memory_config: `ttnn.DRAM_MEMORY_CONFIG`
 - Saves them to disk at the specified path (e.g., `w1.weight` or `w2.input_tensor_b` if you prefer)
 - Handles sharding across devices appropriately (typically column sharding for projections, row sharding for down projections)
-- Returns a `WeightConfig` dict mapping operation keyword parameters to their TTNN weight file paths saved using `save_and_get_path` - this MUST match the TTNN argument name, e.g. use ["w1"]["input_tensor_b"] and not ["w1"]["weight"]. See the [API docs](https://docs.tenstorrent.com/tt-metal/latest/ttnn/ttnn/api/ttnn.linear.html#ttnn-linear) for more details.
+- Returns a `WeightConfig` dict mapping operation keyword parameters to their TTNN weight file paths saved using `save_and_get_path` - this MUST match the TTNN argument name, e.g. use ["w1"]["input_tensor_b"] and not ["w1"]["weight"]. See the [API docs](https://firdovsimammedovk.github.io/tt-metal/ttnn/ttnn/api/ttnn.linear.html#ttnn-linear) for more details.
 
 ### `prefill_model_config(hf_config: PretrainedConfig, **kwargs) -> ModelPrefillConfig` and `decode_model_config(hf_config: PretrainedConfig, **kwargs) -> ModelDecodeConfig`
 - Generate static operator configurations for prefill/decode mode using dataclasses

@@ -66,7 +66,7 @@ The Model Explorer is an intuitive and hierarchical visualization tool using mod
 ### [Tracy Profiler](https://github.com/tenstorrent/tracy)
 The Tracy Profiler is a real-time nanosecond resolution, remote telemetry, hybrid frame, and sampling tool. Tracy supports profiling CPU, GPU, memory allocation, locks, context switches, and more.
 
-### [Kernel Print Debug](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tools/kernel_print.html)
+### [Kernel Print Debug](https://firdovsimammedovk.github.io/tt-metal/tt-metalium/tools/kernel_print.html)
 DPRINT can print variables, addresses, and circular buffer data from kernels to the host terminal or log file. This feature is useful for debugging issues with kernels.
 
 ### [Watcher](https://github.com/tenstorrent/tt-metal/blob/main/docs/source/tt-metalium/tools/watcher.rst)
