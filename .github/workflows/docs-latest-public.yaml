@@ -61,38 +61,6 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Ensure Tracy tool Makefiles exist
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! -d "tt_metal/third_party/tracy" ]]; then
-            echo "Tracy submodule directory missing; skipping Tracy Makefile guard."
-            exit 0
-          fi
-          for tool in csvexport capture; do
-            dir="tt_metal/third_party/tracy/${tool}/build/unix"
-            mkdir -p "${dir}"
-            if [[ ! -f "${dir}/Makefile" ]]; then
-              printf '%b\n' \
-                'all: release' \
-                '' \
-                'debug:' \
-                '\t@$(MAKE) -f debug.mk all' \
-                '' \
-                'release:' \
-                '\t@$(MAKE) -f release.mk all' \
-                '' \
-                'clean:' \
-                '\t@$(MAKE) -f build.mk clean' \
-                '' \
-                'db: clean' \
-                '\t@bear -- $(MAKE) -f debug.mk all' \
-                '\t@mv -f compile_commands.json ../../../' \
-                '' \
-                '.PHONY: all clean debug release db' > "${dir}/Makefile"
-            fi
-          done
-
       - name: Build and install prerequisites
         shell: bash
         run: |
