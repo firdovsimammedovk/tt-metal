@@ -1,0 +1,169 @@
+cmake_minimum_required(VERSION 3.25)
+
+option(TT_UMD_BUILD_JTAG "Enable JTAG support" OFF)
+set(DOWNLOAD_TTEXALENS_PRIVATE ${TT_UMD_BUILD_JTAG})
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON) # This also impacts dependencies brought in through CPM
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # Generate compile_commands.json for IDEs and tools
+
+# Read version from VERSION file (may include prerelease suffix, e.g. 0.9.3-rc1)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" TT_UMD_VERSION_FULL)
+string(STRIP "${TT_UMD_VERSION_FULL}" TT_UMD_VERSION_FULL)
+# CMake project() VERSION only accepts major.minor.patch[.tweak]; strip any -suffix for it
+string(FIND "${TT_UMD_VERSION_FULL}" "-" _dash_idx)
+if(_dash_idx GREATER_EQUAL 0)
+    string(SUBSTRING "${TT_UMD_VERSION_FULL}" 0 ${_dash_idx} TT_UMD_VERSION_CMAKE)
+else()
+    set(TT_UMD_VERSION_CMAKE "${TT_UMD_VERSION_FULL}")
+endif()
+
+project(
+    umd
+    VERSION ${TT_UMD_VERSION_CMAKE}
+    DESCRIPTION "Tenstorrent User Mode Driver"
+    HOMEPAGE_URL "https://github.com/tenstorrent/tt-umd"
+    LANGUAGES
+        C
+        CXX
+)
+
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+include(GNUInstallDirs)
+set(MASTER_PROJECT OFF)
+if(PROJECT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(MASTER_PROJECT ON)
+endif()
+
+if(MASTER_PROJECT)
+    message(STATUS "UMD: Building as master project")
+    if(NOT CMAKE_BUILD_TYPE)
+        message(STATUS "Setting build type to 'Release' as none was specified.")
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Release build is the default" FORCE)
+    endif()
+
+    include(sanitizers)
+endif()
+
+message(STATUS "UMD build type: ${CMAKE_BUILD_TYPE}")
+
+option(TT_UMD_BUILD_TESTS "Enables build of tt_umd tests" OFF)
+option(TT_UMD_BUILD_SIMULATION "Enables build of tt_umd simulation harnessing" OFF)
+option(TT_UMD_BUILD_PYTHON "Enables build of tt_umd python bindings" OFF)
+option(TT_UMD_BUILD_TOOLS "Enables build of tt_umd tools" ON)
+option(TT_UMD_BUILD_EXAMPLES "Enables build of tt_umd examples" OFF)
+option(TT_UMD_BUILD_ALL "Enables build of all tt_umd components (tests, simulation, python, tools, examples)" OFF)
+option(TT_UMD_BUILD_STATIC "Enables build of tt_umd as a static library" OFF)
+option(TT_UMD_ENABLE_TRACY "Enable Tracy profiling support" OFF)
+
+# Prevent installation when building static libraries
+# This check must be early to fail before third-party dependencies are installed
+if(TT_UMD_BUILD_STATIC)
+    install(
+        CODE
+            "message(FATAL_ERROR \"Installation not supported when TT_UMD_BUILD_STATIC=ON. Static libraries are meant for internal linking only, not for installation.\")"
+    )
+endif()
+
+# If BUILD_ALL is enabled, enable all individual build options
+if(TT_UMD_BUILD_ALL)
+    set(TT_UMD_BUILD_TESTS ON CACHE BOOL "Enabled by TT_UMD_BUILD_ALL" FORCE)
+    set(TT_UMD_BUILD_SIMULATION ON CACHE BOOL "Enabled by TT_UMD_BUILD_ALL" FORCE)
+    set(TT_UMD_BUILD_PYTHON ON CACHE BOOL "Enabled by TT_UMD_BUILD_ALL" FORCE)
+    set(TT_UMD_BUILD_TOOLS ON CACHE BOOL "Enabled by TT_UMD_BUILD_ALL" FORCE)
+    set(TT_UMD_BUILD_EXAMPLES ON CACHE BOOL "Enabled by TT_UMD_BUILD_ALL" FORCE)
+    message(STATUS "TT_UMD_BUILD_ALL enabled - building all components")
+endif()
+
+# Control compile time logging
+if(NOT DEFINED TT_UMD_ENABLE_LOGGING)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set(_default_enable_logging ON)
+    else()
+        set(_default_enable_logging OFF)
+    endif()
+endif()
+option(TT_UMD_ENABLE_LOGGING "Enables inclusion of log_trace and log_debug into the binary." ${_default_enable_logging})
+if(TT_UMD_ENABLE_LOGGING)
+    add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
+endif()
+
+add_subdirectory(third_party)
+
+# Create a target that aggregates all generated files needed for code analysis.
+# Subdirectories can add dependencies to this target as needed.
+add_custom_target(umd_all_generated_files)
+
+# Configure clang-tidy AFTER third_party so dependencies are not linted
+option(TT_UMD_ENABLE_CLANG_TIDY "Enable clang-tidy checks during the build" ON)
+if(TT_UMD_ENABLE_CLANG_TIDY)
+    find_program(
+        CLANG_TIDY_EXE
+        NAMES
+            clang-tidy
+            clang-tidy-20
+    )
+    # These flags are needed because clang-tidy might reference warning options in
+    # .clang-tidy config file that aren't supported by your actual compiler
+    # version, and without these flags the build would fail with "unknown warning
+    # option" errors. The flags essentially tell the compiler to ignore unsupported
+    # warning flags instead of treating them as fatal errors.
+    if(CLANG_TIDY_EXE)
+        set(CMAKE_CXX_CLANG_TIDY
+            "${CLANG_TIDY_EXE};--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy;--extra-arg=-Wno-unknown-warning-option;--extra-arg=-Wno-error=unknown-warning-option"
+        )
+        set(CMAKE_C_CLANG_TIDY
+            "${CLANG_TIDY_EXE};--config-file=${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy;--extra-arg=-Wno-unknown-warning-option;--extra-arg=-Wno-error=unknown-warning-option"
+        )
+    endif()
+endif()
+
+# Enable all warnings and treat them as errors
+add_compile_options(
+    "$<$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>:-march=x86-64-v3>"
+    -Wall
+    -Werror
+    -Wno-sign-compare
+)
+
+# Fixed this warning on clang, but not yet gcc
+add_compile_options("$<$<NOT:$<CXX_COMPILER_ID:Clang>>:-Wno-unused-but-set-variable>")
+
+# Conditionally add -Wno-maybe-uninitialized for GCC
+# If this is left enabled it produces a hard to track down issue in stimulus_generators.hpp with ConstrainedTemplateTemplateGenerator
+# TODO: Fix the issue and re-enable this warning
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-Wno-maybe-uninitialized)
+    add_compile_options(-Wno-nonnull)
+endif()
+
+if(TT_UMD_BUILD_SIMULATION)
+    message(STATUS "Building ${PROJECT_NAME} with Simulation")
+endif()
+add_subdirectory(device)
+if(TT_UMD_BUILD_PYTHON)
+    message(STATUS "Building ${PROJECT_NAME} with Python Bindings")
+    add_subdirectory(nanobind)
+endif()
+add_subdirectory(src)
+if(TT_UMD_BUILD_TOOLS)
+    message(STATUS "Building ${PROJECT_NAME} with Tools")
+    add_subdirectory(tools)
+endif()
+
+if(TT_UMD_BUILD_EXAMPLES)
+    message(STATUS "Building ${PROJECT_NAME} with Examples")
+    add_subdirectory(examples)
+endif()
+
+if(TT_UMD_BUILD_TESTS)
+    message(STATUS "Building ${PROJECT_NAME} with Tests")
+    add_subdirectory(tests)
+endif(TT_UMD_BUILD_TESTS)
+
+include(packaging)

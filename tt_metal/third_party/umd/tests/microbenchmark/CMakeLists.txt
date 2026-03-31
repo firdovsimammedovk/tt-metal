@@ -1,0 +1,26 @@
+set(MICROBENCHMARK_SRC_FILES
+    benchmarks/tlb/test_tlb.cpp
+    benchmarks/pcie_dma/test_pcie_dma.cpp
+    benchmarks/open_cluster/test_open_cluster.cpp
+    benchmarks/ethernet_io/test_ethernet_io.cpp
+    benchmarks/iommu/test_iommu.cpp
+)
+add_executable(umd_microbenchmark ${MICROBENCHMARK_SRC_FILES})
+target_link_libraries(
+    umd_microbenchmark
+    PRIVATE
+        test_common
+        nanobench
+)
+target_include_directories(
+    umd_microbenchmark
+    PRIVATE
+        ${nanobench_SOURCE_DIR}/src/include
+        .
+)
+set_target_properties(
+    umd_microbenchmark
+    PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_BINARY_DIR}/test/umd/microbenchmark
+)

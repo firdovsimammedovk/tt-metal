@@ -1,0 +1,83 @@
+# Build and then run all benchmarks, on all supported archs.
+name: Build and run all benchmarks
+
+on:
+  workflow_dispatch:
+    inputs:
+      build-type:
+        required: false
+        default: Release
+        type: choice
+        options:
+          - Release
+          - RelWithDebInfo
+          - Debug
+          - ASan
+          - TSan
+      baseline-run-id:
+        required: false
+        type: string
+  push:
+    branches: ["main"]
+  pull_request:
+    paths:
+      - 'tests/microbenchmark/**'
+
+jobs:
+  build-tests:
+    secrets: inherit
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu-docker-version: [
+          'ubuntu-22.04',
+        ]
+    uses: ./.github/workflows/build-tests.yml
+    with:
+      ubuntu-docker-version: ${{ matrix.ubuntu-docker-version}}
+      timeout: 10
+      build-type: ${{ inputs.build-type || 'Release' }}
+      build-wheel: false
+
+  run-benchmarks:
+    secrets: inherit
+    needs: build-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        test-group: [
+          {arch: wormhole_b0, card: tt-ubuntu-2204-n150-viommu-stable, timeout: 45},
+          {arch: wormhole_b0, card: tt-ubuntu-2204-n300-viommu-stable, timeout: 45},
+          {arch: blackhole, card: tt-ubuntu-2204-p150b-viommu-stable, timeout: 45},
+        ]
+        ubuntu-docker-version: [
+          'ubuntu-22.04',
+        ]
+    uses: ./.github/workflows/run-benchmarks.yml
+    with:
+      arch: ${{ matrix.test-group.arch}}
+      ubuntu-docker-version: ${{ matrix.ubuntu-docker-version}}
+      card: ${{ matrix.test-group.card}}
+      timeout: ${{ matrix.test-group.timeout}}
+      build-type: ${{ inputs.build-type || 'Release' }}
+
+  analyze-results:
+    secrets: inherit
+    needs: run-benchmarks
+    strategy:
+      fail-fast: false
+      matrix:
+        test-group: [
+          {arch: wormhole_b0, card: tt-ubuntu-2204-n150-viommu-stable},
+          {arch: wormhole_b0, card: tt-ubuntu-2204-n300-viommu-stable},
+          {arch: blackhole, card: tt-ubuntu-2204-p150b-viommu-stable},
+        ]
+        ubuntu-docker-version: [
+          'ubuntu-22.04',
+        ]
+    uses: ./.github/workflows/analyze_results.yml
+    with:
+      arch: ${{ matrix.test-group.arch}}
+      ubuntu-docker-version: ${{ matrix.ubuntu-docker-version}}
+      card: ${{ matrix.test-group.card}}
+      baseline-run-id: ${{ inputs.baseline-run-id }}

@@ -1,0 +1,75 @@
+// SPDX-FileCopyrightText: © 2025 Tenstorrent Inc.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
+
+#include <cstdint>
+
+namespace tt::umd {
+
+enum TelemetryTag : uint8_t {
+    BOARD_ID_HIGH = 1,
+    BOARD_ID_LOW = 2,
+    ASIC_ID = 3,
+    HARVESTING_STATE = 4,
+    UPDATE_TELEM_SPEED = 5,
+    VCORE = 6,
+    TDP = 7,
+    TDC = 8,
+    VDD_LIMITS = 9,
+    THM_LIMIT_SHUTDOWN = 10,
+    ASIC_TEMPERATURE = 11,
+    VREG_TEMPERATURE = 12,
+    BOARD_TEMPERATURE = 13,
+    AICLK = 14,
+    AXICLK = 15,
+    ARCCLK = 16,
+    L2CPUCLK0 = 17,
+    L2CPUCLK1 = 18,
+    L2CPUCLK2 = 19,
+    L2CPUCLK3 = 20,
+    ETH_LIVE_STATUS = 21,
+    GDDR_STATUS = 22,
+    GDDR_SPEED = 23,
+    ETH_FW_VERSION = 24,
+    GDDR_FW_VERSION = 25,
+    DM_APP_FW_VERSION = 26,
+    DM_BL_FW_VERSION = 27,
+    FLASH_BUNDLE_VERSION = 28,
+    CM_FW_VERSION = 29,
+    L2CPU_FW_VERSION = 30,
+    FAN_SPEED = 31,
+    TIMER_HEARTBEAT = 32,
+    TELEMETRY_ENUM_COUNT = 33,
+    ENABLED_TENSIX_COL = 34,
+    ENABLED_ETH = 35,
+    ENABLED_GDDR = 36,
+    ENABLED_L2CPU = 37,
+    PCIE_USAGE = 38,
+    NOC_TRANSLATION = 40,
+    FAN_RPM = 41,
+    GDDR_0_1_TEMP = 42,
+    GDDR_2_3_TEMP = 43,
+    GDDR_4_5_TEMP = 44,
+    GDDR_6_7_TEMP = 45,
+    GDDR_0_1_CORR_ERRS = 46,
+    GDDR_2_3_CORR_ERRS = 47,
+    GDDR_4_5_CORR_ERRS = 48,
+    GDDR_6_7_CORR_ERRS = 49,
+    GDDR_UNCORR_ERRS = 50,
+    MAX_GDDR_TEMP = 51,
+    ASIC_LOCATION = 52,
+    BOARD_POWER_LIMIT = 53,
+    TDC_LIMIT_MAX = 55,
+    THM_LIMIT_THROTTLE = 56,
+    TT_FLASH_VERSION = 58,
+    THERM_TRIP_COUNT = 60,
+    ASIC_ID_HIGH = 61,
+    ASIC_ID_LOW = 62,
+    AICLK_LIMIT_MAX = 63,
+    TDP_LIMIT_MAX = 64,
+    NUMBER_OF_TAGS = 65,
+};
+
+}  // namespace tt::umd

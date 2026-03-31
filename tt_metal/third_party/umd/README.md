@@ -1,0 +1,259 @@
+<div align="center">
+<h1> TT-UMD </h1>
+
+User Mode Driver
+
+<img src="https://raw.githubusercontent.com/tenstorrent/tt-umd/main/docs/images/tt_logo_stacked_color.png" alt="ttnn logo" height="100"/>
+
+</div>
+<br/>
+
+# Quickstart
+
+## Software Dependencies
+UMD requires Tenstorrent's [kernel-mode driver](https://github.com/tenstorrent/tt-kmd)
+
+Required Ubuntu dependencies:
+```
+sudo apt install -y libhwloc-dev cmake ninja-build
+```
+
+UMD currently supports gcc-11 and newer gcc versions, and clang-13 and newer clang versions.
+
+## IOMMU and Hugepage requirements
+To determine whether your system requires hugepage configuration, run the provided script:
+
+```bash
+./scripts/iommu_detect.sh
+```
+
+### Wormhole and Blackhole
+If your system IOMMU is enabled, no hugepage setup is required.
+If you don't have IOMMU enabled, than hugepages might be required for some of the driver functionality.
+[1G hugepages](https://www.kernel.org/doc/Documentation/admin-guide/mm/hugetlbpage.rst) are required for shared device/host memory.  Techniques for setup:
+  * Recommended: the [tt-system-tools](https://github.com/tenstorrent/tt-system-tools) repository contains a .deb package which will configure your system
+      * `sudo dpkg -i tenstorrent-tools_1.1-5_all.deb`
+  * Alternative: Metal project provides instructions and a [script](https://github.com/tenstorrent/tt-metal/blob/main/INSTALLING.md#step-3-hugepages).
+  * For experts:
+    * Put system IOMMU in passthrough mode or disable it
+    * Allocate 1 or more 1G hugepages
+    * Mount the hugetlbfs at /dev/hugepages-1G (e.g. `mount -t hugetlbfs hugetlbfs /dev/hugepages-1G -o mode=777,pagesize=1024M`)
+
+## Install and use UMD
+
+### Python bindings
+
+You can just run the following command, and you'll have tt_umd python package available in your environment:
+```
+pip install git+https://github.com/tenstorrent/tt-umd.git
+```
+
+Or if you have UMD downloaded locally you can install from local source:
+```
+pip install .
+```
+
+### Build flow for C++ lib
+
+To build `libdevice.so`:
+```
+cmake -B build -G Ninja
+cmake --build build
+```
+
+To build all components (some are turned off by default, like tests), you can run these commands:
+```
+cmake -B build -G Ninja -DTT_UMD_BUILD_ALL=ON
+cmake --build build
+```
+
+To build with GCC, set these environment variables before invoking `cmake`:
+```
+export CC=gcc
+export CXX=g++
+```
+
+#### Build debian dev package
+```
+cmake --build build --target package
+
+# Generates umd-dev-x.y.z-Linux.deb
+```
+
+### Enabling Logging
+
+UMD uses a two-level logging system with compile-time and runtime controls.
+
+#### Compile-Time Logging Control
+
+By default, `log_debug` and `log_trace` statements are compiled out of release builds for performance. To include them in the binary:
+
+**Option 1: Enable logging explicitly**
+```bash
+cmake -B build -G Ninja -DTT_UMD_ENABLE_LOGGING=ON
+cmake --build build
+```
+
+**Option 2: Use Debug build type** (enables logging automatically)
+```bash
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+```
+
+#### Runtime Logging Control
+
+At runtime, control the logging level using the `TT_LOGGER_LEVEL` environment variable:
+
+```bash
+export TT_LOGGER_LEVEL=debug  # Show debug and above
+export TT_LOGGER_LEVEL=trace  # Show all log messages (most verbose)
+export TT_LOGGER_LEVEL=info   # Default level
+```
+
+Available log levels (from most to least verbose):
+- `trace` - Most detailed logging, traces program execution
+- `debug` - Debugging information useful during development
+- `info` - General informational messages (default)
+- `warn` - Warning messages for potentially harmful situations
+- `error` - Error messages for serious problems
+- `critical` - Critical errors that may lead to program termination
+- `off` - Disables all logging
+
+**Example: Running with debug logging**
+```bash
+# Build with logging enabled
+cmake -B build -G Ninja -DTT_UMD_ENABLE_LOGGING=ON
+cmake --build build
+
+# Run with debug level
+TT_LOGGER_LEVEL=debug ./build/bin/your_program
+```
+
+### Tracy Profiling
+
+UMD supports [Tracy](https://github.com/tenstorrent/tracy) profiling via the `TT_UMD_ENABLE_TRACY` build option. When disabled (the default), Tracy has zero footprint — no binary overhead, no runtime cost.
+
+#### Building with Tracy
+
+```bash
+cmake -B build -G Ninja -DTT_UMD_ENABLE_TRACY=ON
+cmake --build build
+```
+
+#### Capturing a trace
+
+Launch the [Tracy server](https://github.com/tenstorrent/tracy), start the application you want to profile, then click connect
+
+# Integration
+UMD can be consumed by downstream projects in multiple ways.
+
+## From Source (Python)
+You can use tt_umd module by installing it in your current python environment
+
+## From Source (CMake)
+You can link `libdevice.so` by linking against the `umd::device` target.
+
+### Using CPM Package Manager
+```
+CPMAddPackage(
+  NAME umd
+  GITHUB_REPOSITORY tenstorrent/tt-umd
+  GIT_TAG v0.1.0
+  VERSION 0.1.0
+)
+```
+
+### As a submodule/external project
+```
+add_subdirectory(<path to umd>)
+```
+
+## From Prebuilt Binaries
+
+### Ubuntu
+```
+apt install ./umd-dev-x.y.z-Linux.deb
+```
+
+## Simulator Integration
+You can run UMD tests without silicon by following setup instructions [here](https://yyz-gitlab.local.tenstorrent.com/tenstorrent/tt-metal).
+
+For UMD, sample tests can be found in `tests/simulation/test_simulation_device.cpp`
+
+# Development workflow
+
+For developing tt-umd, you can see the full set of dependencies in [docker_install_common.sh](.github/docker_install_common.sh)
+
+After that you can look at the section defined above [Install and use UMD](#install-and-use-umd)
+
+## Pre-commit Hook Integration for Formatting and Linting
+
+As part of maintaining consistent code formatting across the project, we have integrated the [pre-commit](https://pre-commit.com/) framework into our workflow. The pre-commit hooks will help automatically check and format code before commits are made, ensuring that we adhere to the project's coding standards.
+
+### What is Pre-commit?
+
+Pre-commit is a framework for managing and maintaining multi-language pre-commit hooks. It helps catch common issues early by running a set of hooks before code is committed, automating tasks like:
+
+- Formatting code (e.g., fixing trailing whitespace, enforcing end-of-file newlines)
+- Running linters (e.g., `clang-format`, `black`, `flake8`)
+- Checking for merge conflicts or other common issues.
+
+For more details on pre-commit, you can visit the [official documentation](https://pre-commit.com/).
+
+### How to Set Up Pre-commit Locally
+
+To set up pre-commit on your local machine, follow these steps:
+
+1. **Install Pre-commit**:
+   Ensure you have Python installed, then run:
+   ```bash
+   pip install pre-commit
+   ```
+2. **Install the Git Hook Scripts**:
+   In your local repository, run the following command to install the pre-commit hooks:
+   ```bash
+   pre-commit install
+   ```
+   This command will configure your local Git to run the defined hooks automatically before each commit.
+3. **Run Pre-commit Hooks Manually**:
+   You can also run the hooks manually against all files at any time with:
+   ```bash
+   pre-commit run --all-files
+   ```
+### Why You Should Use Pre-commit
+By setting up pre-commit locally, you can help maintain the quality of the codebase and ensure that commits consistently meet the project's formatting standards. This saves time during code reviews and reduces the likelihood of code formatting issues slipping into the repository.
+
+Since the hooks run automatically before each commit, you don't need to remember to manually format or check your code, making it easier to maintain consistency.
+
+We strongly encourage all developers to integrate pre-commit into their workflow.
+
+## Formatting C++ code
+
+### Installing clang-format
+
+If you're using an IRD docker, clang-format should be already available.
+If you don't have clang-format in your working environment, follow the instructions
+on [llvm website](https://apt.llvm.org/) for installing it.
+
+### Formatting files
+
+If working with VSCode, you can copy the provided default settings:
+```bash
+cp .vscode/default.settings.json .vscode/settings.json
+```
+
+From now on, c++ files will be formatted on save (given that clang-format is available).
+
+Note that if you setup pre-commit hook, the files will be automatically formatted when you commit changes.
+You can also manually auto format the whole repo using mentioned pre-commit:
+```bash
+   pre-commit run --all-files
+```
+
+## Bumping the UMD version
+
+There is an automated workflow for creating releases. It is triggered by merging a PR to main which changes the VERSION file.
+
+You can change the VERSION as part of another PR or as an isolated PR. Please also update the CHANGELOG with the exact version you are changeing to.
+
+Once the PR is merged, a draft Release will be created with the generated changelog and artifacts. Please review it and publish it using the tag which exactly matches the version of the release.
