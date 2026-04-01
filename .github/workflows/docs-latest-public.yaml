@@ -119,27 +119,59 @@ jobs:
             echo "TTNN backend import check: MISSING"
           fi
 
-      - name: Build and install prerequisites
-        if: steps.cache-build.outputs.cache-hit != 'true' || steps.cache-docs-venv.outputs.cache-hit != 'true' || steps.verify-ttnn-backend.outputs.ttnn_backend_ready != 'true'
+      - name: Build native prerequisites (best effort)
+        if: steps.cache-build.outputs.cache-hit != 'true'
         shell: bash
         run: |
           set -euo pipefail
           source .ci-docs-venv/bin/activate
           python -m pip install --upgrade pip
+          build_status=0
           if [[ -x ./build_metal.sh ]]; then
+            set +e
             ./build_metal.sh --disable-profiler
+            build_status=$?
+            set -e
           elif [[ -f ./build_metal.sh ]]; then
             chmod +x ./build_metal.sh
+            set +e
             ./build_metal.sh --disable-profiler
+            build_status=$?
+            set -e
           else
+            set +e
             cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=build -DENABLE_TRACY=OFF
             cmake --build build
             cmake --install build
+            build_status=$?
+            set -e
           fi
+          if [[ "$build_status" -ne 0 ]]; then
+            echo "::warning::Native build failed (likely SFPI toolchain issue). Continuing with Python packaging fallback."
+          fi
+
+      - name: Install docs/python prerequisites
+        if: steps.cache-docs-venv.outputs.cache-hit != 'true' || steps.verify-ttnn-backend.outputs.ttnn_backend_ready != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          source .ci-docs-venv/bin/activate
+          python -m pip install --upgrade pip
           pip install -r docs/requirements-docs.txt
           CIBUILDWHEEL=1 CIBW_BUILD_TYPE=Release pip install -e .
           pip install torch --index-url https://download.pytorch.org/whl/cpu
           pip install pytest
+
+      - name: Verify TTNN backend import before docs build
+        shell: bash
+        run: |
+          set -euo pipefail
+          source .ci-docs-venv/bin/activate
+          python - <<'PY'
+          import importlib
+          importlib.import_module("ttnn._ttnn")
+          print("ttnn._ttnn import OK")
+          PY
 
       - name: Build docs
         working-directory: docs
