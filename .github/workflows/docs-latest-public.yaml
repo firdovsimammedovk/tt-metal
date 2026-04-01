@@ -158,11 +158,18 @@ jobs:
           source .ci-docs-venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r docs/requirements-docs.txt
-          if [[ -f "build/lib/_ttnn.so" ]]; then
-            echo "Using precompiled tt-metal artifacts from build/lib"
+          if [[ -f "build/lib/_ttnn.so" && -d "build/lib" && -d "runtime" ]]; then
+            echo "Attempting precompiled tt-metal install (build/lib + runtime present)"
+            set +e
             TT_FROM_PRECOMPILED_DIR="${GITHUB_WORKSPACE}" pip install --force-reinstall .
+            precompiled_status=$?
+            set -e
+            if [[ "$precompiled_status" -ne 0 ]]; then
+              echo "::warning::Precompiled install failed, falling back to CMake wheel build."
+              CIBUILDWHEEL=1 CIBW_BUILD_TYPE=Release pip install --force-reinstall .
+            fi
           else
-            echo "Precompiled _ttnn.so not found; falling back to CMake wheel build path"
+            echo "Precompiled artifacts incomplete (need build/lib and runtime); using CMake wheel build path"
             CIBUILDWHEEL=1 CIBW_BUILD_TYPE=Release pip install --force-reinstall .
           fi
           pip install torch --index-url https://download.pytorch.org/whl/cpu
