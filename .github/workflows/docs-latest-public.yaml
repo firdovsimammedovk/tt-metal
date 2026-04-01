@@ -18,6 +18,12 @@ jobs:
   build-docs:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
+    env:
+      SEARCH_API_BASE: https://csl860x2oj.execute-api.us-east-2.amazonaws.com/prod
+      DOC_CATALOG_SOURCE_ID: docs-tenstorrent
+      DOC_SITE_BASE_URL: https://firdovsimammedovk.github.io/tt-metal
+      DOCS_ID_NAMESPACE: tt-metal
+      DOCS_SEARCH_INGEST_API_KEY: ${{ secrets.DOCS_SEARCH_INGEST_API_KEY_TT_METAL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -116,6 +122,16 @@ jobs:
         env:
           TT_METAL_HOME: ${{ github.workspace }}
         run: make html
+
+      - name: Skip indexing when API key is missing
+        if: ${{ env.DOCS_SEARCH_INGEST_API_KEY == '' }}
+        run: |
+          echo "::warning::Skipping remote search indexing because DOCS_SEARCH_INGEST_API_KEY_TT_METAL is not set."
+
+      - name: Trigger remote search indexing
+        if: ${{ env.DOCS_SEARCH_INGEST_API_KEY != '' }}
+        run: |
+          python docs/scripts/index_remote_search.py
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3

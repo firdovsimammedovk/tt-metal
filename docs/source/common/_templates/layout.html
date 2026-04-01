@@ -32,3 +32,15 @@
 {%- include "searchbox.html" %}
 
 {%- endblock %}
+
+{%- block extrahead %}
+  {{ super() }}
+  <script>
+    window.TT_DOCS_REMOTE_SEARCH = {
+      apiBase: "https://csl860x2oj.execute-api.us-east-2.amazonaws.com/prod",
+      sourceId: "docs-tenstorrent",
+      siteBaseUrl: "https://firdovsimammedovk.github.io/tt-metal/"
+    };
+  </script>
+  <script defer src="{{ pathto('_static/remote_search.js', 1) }}"></script>
+{%- endblock %}

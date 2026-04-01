@@ -469,3 +469,33 @@ https://github.com/readthedocs/sphinx_rtd_theme/issues/1301
 .py.property {
   display: block !important;
 }
+
+/* Remote search results */
+.remote-search-results {
+  list-style: none;
+  padding-left: 0;
+}
+
+.remote-search-results li {
+  margin: 0 0 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--color-background-20);
+  border-left: 3px solid var(--color-accent);
+}
+
+.remote-search-results .context {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--color-foreground);
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.remote-search-source {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--color-dark-purple);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
