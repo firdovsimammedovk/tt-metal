@@ -95,8 +95,32 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Verify TTNN backend import
+        id: verify-ttnn-backend
+        shell: bash
+        run: |
+          set +e
+          source .ci-docs-venv/bin/activate
+          python - <<'PY'
+          import importlib
+          import sys
+          try:
+              importlib.import_module("ttnn._ttnn")
+              sys.exit(0)
+          except Exception:
+              sys.exit(1)
+          PY
+          status=$?
+          if [ "$status" -eq 0 ]; then
+            echo "ttnn_backend_ready=true" >> "$GITHUB_OUTPUT"
+            echo "TTNN backend import check: OK"
+          else
+            echo "ttnn_backend_ready=false" >> "$GITHUB_OUTPUT"
+            echo "TTNN backend import check: MISSING"
+          fi
+
       - name: Build and install prerequisites
-        if: steps.cache-build.outputs.cache-hit != 'true' || steps.cache-docs-venv.outputs.cache-hit != 'true'
+        if: steps.cache-build.outputs.cache-hit != 'true' || steps.cache-docs-venv.outputs.cache-hit != 'true' || steps.verify-ttnn-backend.outputs.ttnn_backend_ready != 'true'
         shell: bash
         run: |
           set -euo pipefail
