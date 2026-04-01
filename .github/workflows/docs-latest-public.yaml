@@ -158,6 +158,13 @@ jobs:
           source .ci-docs-venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r docs/requirements-docs.txt
+          if [[ ! -x "/opt/tenstorrent/sfpi/compiler/bin/riscv-tt-elf-g++" ]]; then
+            echo "System SFPI compiler not found. Installing via install_dependencies.sh --sfpi"
+            chmod +x ./install_dependencies.sh
+            sudo ./install_dependencies.sh --sfpi
+          else
+            echo "System SFPI compiler already present."
+          fi
           if [[ -f "build/lib/_ttnn.so" && -d "build/lib" && -d "runtime" ]]; then
             echo "Attempting precompiled tt-metal install (build/lib + runtime present)"
             set +e
