@@ -17,9 +17,13 @@
 import os
 import sys
 import collections
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.insert(0, os.path.abspath("../common"))
 sys.path.append(os.path.abspath("./_ext"))
+
+from docs_versions import get_published_versions
 
 MetalSphinxConfig = collections.namedtuple("MetalSphinxConfig", ["fullname", "shortname"])
 
@@ -108,7 +112,16 @@ html_baseurl = f"/tt-metal/" + os.environ["DOCS_VERSION"] + f"/{metal_sphinx_con
 html_static_path = ["_static"]
 html_js_files = ["posthog.js"]
 
-html_context = {"logo_link_url": "https://firdovsimammedovk.github.io/tenstorrent/"}
+_docs_version = os.environ.get("DOCS_VERSION", "latest").strip()
+_docs_site_base = os.environ.get("DOC_SITE_BASE_URL", "https://firdovsimammedovk.github.io/tt-metal").rstrip("/")
+
+html_context = {
+    "logo_link_url": "https://firdovsimammedovk.github.io/tenstorrent/",
+    "versions": get_published_versions(Path(__file__)),
+    "current_version": _docs_version,
+    "docs_site_base": _docs_site_base,
+    "docs_project_subpath": metal_sphinx_config.shortname,
+}
 
 
 def setup(app):
